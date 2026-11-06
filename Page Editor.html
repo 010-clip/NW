@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page Editor — NetWeave</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { ink: '#09090B', brand: { cyan: '#00F2FE', blue: '#4FACFE' } },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            display: ['"Space Grotesk"', 'Inter', 'sans-serif'],
+          },
+          boxShadow: { glow: '0 0 60px -14px rgba(0, 180, 255, 0.55)' },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body { -webkit-font-smoothing: antialiased; }
+    ::selection { background: #4FACFE; color: #09090B; }
+    ::-webkit-scrollbar { width: 9px; height: 9px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #27272A; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3F3F46; }
+
+    /* ---- device toggle → canvas width ---- */
+    #dev-d:checked ~ .editor-root .device-canvas { max-width: 100%; }
+    #dev-t:checked ~ .editor-root .device-canvas { max-width: 768px; }
+    #dev-m:checked ~ .editor-root .device-canvas { max-width: 400px; }
+    #dev-d:checked ~ .editor-root label[for="dev-d"],
+    #dev-t:checked ~ .editor-root label[for="dev-t"],
+    #dev-m:checked ~ .editor-root label[for="dev-m"] {
+      background-image: linear-gradient(90deg, #00F2FE, #4FACFE);
+      color: #fff;
+    }
+
+    /* ---- mobile left panel (slide-in sheet) ---- */
+    .left-panel {
+      position: fixed; top: 0; bottom: 0; left: 0; z-index: 60; width: 304px;
+      transform: translateX(-100%);
+      transition: transform .28s cubic-bezier(.4,0,.2,1);
+    }
+    #panel-toggle:checked ~ .editor-root .left-panel { transform: translateX(0); }
+    .panel-scrim { display: none; }
+    #panel-toggle:checked ~ .editor-root .panel-scrim { display: block; }
+    @media (min-width: 1024px) {
+      .left-panel { position: static; transform: none; }
+      .panel-scrim { display: none !important; }
+    }
+
+    details[open] .chev { transform: rotate(180deg); }
+  </style>
+</head>
+
+<body class="bg-ink font-sans text-zinc-300 antialiased">
+
+<!-- ===== state controls (CSS-only) ===== -->
+<input type="radio" name="device" id="dev-d" class="sr-only" checked />
+<input type="radio" name="device" id="dev-t" class="sr-only" />
+<input type="radio" name="device" id="dev-m" class="sr-only" />
+<input type="checkbox" id="panel-toggle" class="sr-only" />
+
+<div class="editor-root flex h-screen flex-col overflow-hidden">
+
+  <!-- ============================================================
+       TOP BAR
+  ============================================================ -->
+  <header class="z-40 flex h-14 shrink-0 items-center gap-3 border-b border-white/[0.06] bg-zinc-950 px-3 sm:px-4">
+
+    <a href="dashboard.html" class="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-white/[0.08] text-zinc-400 transition-colors hover:bg-white/5 hover:text-white" aria-label="Back to dashboard">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
+    </a>
+
+    <div class="hidden h-6 w-px bg-white/[0.08] sm:block"></div>
+
+    <!-- page selector -->
+    <details class="relative hidden sm:block">
+      <summary class="flex cursor-pointer list-none items-center gap-2 rounded-lg px-2.5 py-1.5 transition-colors hover:bg-white/5">
+        <span class="text-[12.5px] font-semibold text-white">Home</span>
+        <span class="rounded bg-white/[0.07] px-1.5 py-0.5 text-[9.5px] font-medium text-zinc-500">5 pages</span>
+        <svg class="chev h-3.5 w-3.5 text-zinc-500 transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+      </summary>
+      <div class="absolute left-0 top-full z-50 mt-1.5 w-56 overflow-hidden rounded-xl border border-white/10 bg-zinc-900 p-1 shadow-2xl">
+        <p class="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-600">Site pages</p>
+        <a href="#" class="flex items-center gap-2 rounded-lg bg-white/[0.06] px-2.5 py-2 text-[12.5px] font-medium text-white">
+          <svg class="h-3.5 w-3.5 text-brand-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" /></svg>
+          Home
+          <span class="ml-auto h-1.5 w-1.5 rounded-full bg-gradient-to-r from-brand-cyan to-brand-blue"></span>
+        </a>
+        <a href="#" class="flex items-center gap-2 rounded-lg px-2.5 py-2 text-[12.5px] font-medium text-zinc-300 hover:bg-white/5">
+          <svg class="h-3.5 w-3.5 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" /></svg>
+          Work
+        </a>
+        <a href="#" class="flex items-center gap-2 rounded-lg px-2.5 py-2 text-[12.5px] font-medium text-zinc-300 hover:bg-white/5">
+          <svg class="h-3.5 w-3.5 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
+          Services
+        </a>
+        <a href="#" class="flex items-center gap-2 rounded-lg px-2.5 py-2 text-[12.5px] font-medium text-zinc-300 hover:bg-white/5">
+          <svg class="h-3.5 w-3.5 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 16v-4M12 8h.01" /></svg>
+          About
+        </a>
+        <a href="#" class="flex items-center gap-2 rounded-lg px-2.5 py-2 text-[12.5px] font-medium text-zinc-300 hover:bg-white/5">
+          <svg class="h-3.5 w-3.5 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z" /></svg>
+          Contact
+        </a>
+        <div class="my-1 h-px bg-white/[0.07]"></div>
+        <a href="#" class="flex items-center gap-2 rounded-lg px-2.5 py-2 text-[12px] font-semibold text-brand-cyan hover:bg-white/5">
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>
+          New page
+        </a>
+      </div>
+    </details>
+
+    <!-- device toggle -->
+    <div class="ml-auto flex items-center gap-0.5 rounded-lg border border-white/[0.08] bg-white/[0.03] p-0.5 sm:ml-0">
+      <label for="dev-d" class="grid h-7 w-8 cursor-pointer place-items-center rounded-md text-zinc-500 transition-colors hover:text-white" aria-label="Desktop preview">
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2" /><path d="M8 21h8M12 17v4" /></svg>
+      </label>
+      <label for="dev-t" class="grid h-7 w-8 cursor-pointer place-items-center rounded-md text-zinc-500 transition-colors hover:text-white" aria-label="Tablet preview">
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M12 17.5h.01" /></svg>
+      </label>
+      <label for="dev-m" class="grid h-7 w-8 cursor-pointer place-items-center rounded-md text-zinc-500 transition-colors hover:text-white" aria-label="Mobile preview">
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.5" /><path d="M12 18h.01" /></svg>
+      </label>
+    </div>
+
+    <!-- mobile customize trigger -->
+    <label for="panel-toggle" class="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-lg border border-white/[0.08] text-zinc-400 transition-colors hover:bg-white/5 hover:text-white lg:hidden" aria-label="Open editor panel">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h6" /><circle cx="18" cy="12" r="2" /><circle cx="14" cy="18" r="2" /></svg>
+    </label>
+
+    <div class="hidden h-6 w-px bg-white/[0.08] sm:block"></div>
+
+    <!-- actions -->
+    <div class="hidden items-center gap-2 sm:flex">
+      <a href="storefront.html" class="hidden rounded-lg border border-white/[0.08] px-3 py-2 text-[12.5px] font-medium text-zinc-300 transition-colors hover:bg-white/[0.06] hover:text-white md:inline-flex">
+        Preview
+      </a>
+      <button class="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-brand-cyan to-brand-blue px-3.5 py-2 text-[12.5px] font-semibold text-white transition-all hover:shadow-glow">
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+        <span class="hidden sm:inline">Publish Changes</span>
+        <span class="sm:hidden">Publish</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       BODY
+  ============================================================ -->
+  <div class="flex flex-1 overflow-hidden">
+
+    <!-- scrim (mobile) -->
+    <label for="panel-toggle" class="panel-scrim fixed inset-0 z-50 bg-black/70 backdrop-blur-sm lg:hidden" aria-label="Close panel"></label>
+
+    <!-- ==========================================================
+         LEFT PANEL
+    ========================================================== -->
+    <aside class="left-panel flex flex-col border-r border-white/[0.06] bg-zinc-950 lg:h-full">
+
+      <div class="flex h-12 shrink-0 items-center justify-between border-b border-white/[0.06] px-4">
+        <p class="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Customize</p>
+        <label for="panel-toggle" class="grid h-7 w-7 cursor-pointer place-items-center rounded-md text-zinc-500 hover:bg-white/5 hover:text-white lg:hidden">
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        </label>
+      </div>
+
+      <div class="flex-1 overflow-y-auto">
+
+        <!-- ---------- SECTIONS ---------- -->
+        <div class="border-b border-white/[0.06] p-3">
+          <div class="flex items-center justify-between px-1 pb-2">
+            <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-600">Sections</p>
+            <button class="text-[10.5px] font-medium text-zinc-500 hover:text-white">Reorder</button>
+          </div>
+
+          <ul class="space-y-0.5">
+            <!-- announcement -->
+            <li>
+              <div class="group flex items-center gap-2 rounded-lg px-2 py-2 transition-colors hover:bg-white/[0.04]">
+                <svg class="h-3 w-3 shrink-0 cursor-grab text-zinc-700 group-hover:text-zinc-500" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                <span class="text-[12.5px] text-zinc-400">Announcement Bar</span>
+                <button class="ml-auto text-zinc-600 hover:text-white" aria-label="Hide section">
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="2.5" /></svg>
+                </button>
+              </div>
+            </li>
+            <!-- header -->
+            <li>
+              <div class="group flex items-center gap-2 rounded-lg px-2 py-2 transition-colors hover:bg-white/[0.04]">
+                <svg class="h-3 w-3 shrink-0 cursor-grab text-zinc-700 group-hover:text-zinc-500" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                <span class="text-[12.5px] text-zinc-400">Header</span>
+                <button class="ml-auto text-zinc-600 hover:text-white" aria-label="Hide section">
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="2.5" /></svg>
+                </button>
+              </div>
+            </li>
+            <!-- hero (active) -->
+            <li>
+              <div class="relative flex items-center gap-2 rounded-lg bg-white/[0.07] px-2 py-2">
+                <span class="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r-full bg-gradient-to-b from-brand-cyan to-brand-blue"></span>
+                <svg class="h-3 w-3 shrink-0 cursor-grab text-zinc-500" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                <span class="text-[12.5px] font-medium text-white">Hero Section</span>
+                <button class="ml-auto text-brand-cyan" aria-label="Hide section">
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="2.5" /></svg>
+                </button>
+              </div>
+            </li>
+            <!-- feature grid -->
+            <li>
+              <div class="group flex items-center gap-2 rounded-lg px-2 py-2 transition-colors hover:bg-white/[0.04]">
+                <svg class="h-3 w-3 shrink-0 cursor-grab text-zinc-700 group-hover:text-zinc-500" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                <span class="text-[12.5px] text-zinc-400">Feature Grid</span>
+                <button class="ml-auto text-zinc-600 hover:text-white" aria-label="Hide section">
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="2.5" /></svg>
+                </button>
+              </div>
+            </li>
+            <!-- media gallery -->
+            <li>
+              <div class="group flex items-center gap-2 rounded-lg px-2 py-2 transition-colors hover:bg-white/[0.04]">
+                <svg class="h-3 w-3 shrink-0 cursor-grab text-zinc-700 group-hover:text-zinc-500" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                <span class="text-[12.5px] text-zinc-400">Media Gallery</span>
+                <button class="ml-auto text-zinc-600 hover:text-white" aria-label="Hide section">
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="2.5" /></svg>
+                </button>
+              </div>
+            </li>
+            <!-- testimonial slider -->
+            <li>
+              <div class="group flex items-center gap-2 rounded-lg px-2 py-2 transition-colors hover:bg-white/[0.04]">
+                <svg class="h-3 w-3 shrink-0 cursor-grab text-zinc-700 group-hover:text-zinc-500" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                <span class="text-[12.5px] text-zinc-400">Testimonial Slider</span>
+                <button class="ml-auto text-zinc-600 hover:text-white" aria-label="Hide section">
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="2.5" /></svg>
+                </button>
+              </div>
+            </li>
+            <!-- contact form -->
+            <li>
+              <div class="group flex items-center gap-2 rounded-lg px-2 py-2 transition-colors hover:bg-white/[0.04]">
+                <svg class="h-3 w-3 shrink-0 cursor-grab text-zinc-700 group-hover:text-zinc-500" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                <span class="text-[12.5px] text-zinc-400">Contact Form</span>
+                <button class="ml-auto text-zinc-600 hover:text-white" aria-label="Hide section">
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="2.5" /></svg>
+                </button>
+              </div>
+            </li>
+            <!-- footer -->
+            <li>
+              <div class="group flex items-center gap-2 rounded-lg px-2 py-2 transition-colors hover:bg-white/[0.04]">
+                <svg class="h-3 w-3 shrink-0 cursor-grab text-zinc-700 group-hover:text-zinc-500" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                <span class="text-[12.5px] text-zinc-400">Footer</span>
+                <button class="ml-auto text-zinc-600 hover:text-white" aria-label="Hide section">
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="2.5" /></svg>
+                </button>
+              </div>
+            </li>
+          </ul>
+
+          <!-- section controls -->
+          <div class="mt-3 flex gap-1.5">
+            <button class="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-brand-cyan to-brand-blue px-2 py-2 text-[11.5px] font-semibold text-white transition-all hover:shadow-glow">
+              <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>
+              Add Block
+            </button>
+            <button class="grid h-8 w-8 place-items-center rounded-lg border border-white/[0.08] text-zinc-400 transition-colors hover:bg-white/[0.06] hover:text-white" aria-label="Duplicate section">
+              <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
+            </button>
+            <button class="grid h-8 w-8 place-items-center rounded-lg border border-white/[0.08] text-zinc-400 transition-colors hover:border-rose-500/40 hover:bg-rose-500/10 hover:text-rose-400" aria-label="Delete section">
+              <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- ---------- STYLE: BACKGROUND ---------- -->
+        <div class="border-b border-white/[0.06] p-4">
+          <div class="flex items-center justify-between">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">Background</p>
+            <span class="font-mono text-[10px] text-zinc-600">#09090B</span>
+          </div>
+          <div class="mt-3 flex items-center gap-2">
+            <button class="h-7 w-7 rounded-full bg-ink ring-2 ring-white/80 ring-offset-2 ring-offset-zinc-950" aria-label="Ink"></button>
+            <button class="h-7 w-7 rounded-full bg-zinc-900 ring-1 ring-white/15 transition-transform hover:scale-110" aria-label="Zinc 900"></button>
+            <button class="h-7 w-7 rounded-full bg-zinc-800 ring-1 ring-white/15 transition-transform hover:scale-110" aria-label="Zinc 800"></button>
+            <button class="h-7 w-7 rounded-full bg-white ring-1 ring-white/30 transition-transform hover:scale-110" aria-label="White"></button>
+            <label class="relative grid h-7 w-7 cursor-pointer place-items-center rounded-full border border-dashed border-white/25 text-zinc-500 transition-colors hover:border-brand-cyan hover:text-brand-cyan">
+              <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>
+              <input type="color" value="#09090b" class="absolute inset-0 h-full w-full cursor-pointer opacity-0" aria-label="Custom background colour" />
+            </label>
+          </div>
+        </div>
+
+        <!-- ---------- STYLE: TEXT ---------- -->
+        <div class="border-b border-white/[0.06] p-4">
+          <div class="flex items-center justify-between">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">Text</p>
+            <span class="font-mono text-[10px] text-zinc-600">#FAFAFA</span>
+          </div>
+          <div class="mt-3 flex items-center gap-2">
+            <button class="h-7 w-7 rounded-full bg-white ring-2 ring-white/80 ring-offset-2 ring-offset-zinc-950" aria-label="White"></button>
+            <button class="h-7 w-7 rounded-full bg-zinc-300 ring-1 ring-white/15 transition-transform hover:scale-110" aria-label="Zinc 300"></button>
+            <button class="h-7 w-7 rounded-full bg-zinc-500 ring-1 ring-white/15 transition-transform hover:scale-110" aria-label="Zinc 500"></button>
+            <button class="h-7 w-7 rounded-full bg-zinc-800 ring-1 ring-white/15 transition-transform hover:scale-110" aria-label="Zinc 800"></button>
+            <label class="relative grid h-7 w-7 cursor-pointer place-items-center rounded-full border border-dashed border-white/25 text-zinc-500 transition-colors hover:border-brand-cyan hover:text-brand-cyan">
+              <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>
+              <input type="color" value="#fafafa" class="absolute inset-0 h-full w-full cursor-pointer opacity-0" aria-label="Custom text colour" />
+            </label>
+          </div>
+        </div>
+
+        <!-- ---------- STYLE: ACCENT ---------- -->
+        <div class="border-b border-white/[0.06] p-4">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">Accent</p>
+          <div class="mt-3 flex items-center gap-2">
+            <button class="relative h-8 w-14 rounded-lg bg-gradient-to-r from-brand-cyan to-brand-blue ring-2 ring-white/60 ring-offset-2 ring-offset-zinc-950" aria-label="Brand gradient"></button>
+            <button class="h-8 w-14 rounded-lg bg-gradient-to-r from-violet-500 to-fuchsia-600 ring-1 ring-white/15 transition-transform hover:scale-105" aria-label="Violet gradient"></button>
+            <button class="h-8 w-14 rounded-lg bg-gradient-to-r from-amber-400 to-orange-600 ring-1 ring-white/15 transition-transform hover:scale-105" aria-label="Amber gradient"></button>
+          </div>
+          <p class="mt-2.5 flex items-center gap-1.5 text-[10.5px] text-zinc-600">
+            <svg class="h-3 w-3 shrink-0 text-brand-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 16v-4M12 8h.01" /></svg>
+            Accent drives buttons, links &amp; highlights
+          </p>
+        </div>
+
+        <!-- ---------- STYLE: TYPE ---------- -->
+        <div class="border-b border-white/[0.06] p-4">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">Font family</p>
+          <div class="relative mt-3">
+            <select class="h-9 w-full appearance-none rounded-lg border border-white/[0.08] bg-white/[0.03] pl-3 pr-9 text-[12.5px] font-medium text-zinc-200 focus:border-brand-cyan/40 focus:outline-none focus:ring-2 focus:ring-brand-cyan/20">
+              <option>Space Grotesk</option>
+              <option>Inter</option>
+              <option>Archivo</option>
+              <option>IBM Plex Mono</option>
+            </select>
+            <svg class="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+          </div>
+        </div>
+
+        <!-- ---------- STYLE: RADIUS ---------- -->
+        <div class="p-4">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">Button radius</p>
+          <div class="mt-3 grid grid-cols-3 gap-1.5">
+            <button class="flex flex-col items-center gap-1.5 rounded-lg border border-white/[0.08] px-2 py-2.5 transition-colors hover:bg-white/[0.04]">
+              <span class="h-4 w-10 rounded-none bg-white/25"></span>
+              <span class="text-[10px] font-medium text-zinc-500">Sharp</span>
+            </button>
+            <button class="flex flex-col items-center gap-1.5 rounded-lg border border-brand-cyan/40 bg-gradient-to-b from-brand-cyan/[0.12] to-brand-blue/[0.06] px-2 py-2.5">
+              <span class="h-4 w-10 rounded-md bg-gradient-to-r from-brand-cyan to-brand-blue"></span>
+              <span class="text-[10px] font-semibold text-white">Rounded</span>
+            </button>
+            <button class="flex flex-col items-center gap-1.5 rounded-lg border border-white/[0.08] px-2 py-2.5 transition-colors hover:bg-white/[0.04]">
+              <span class="h-4 w-10 rounded-full bg-white/25"></span>
+              <span class="text-[10px] font-medium text-zinc-500">Pill</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- panel footer -->
+      <div class="shrink-0 border-t border-white/[0.06] p-3">
+        <div class="flex items-center justify-between rounded-lg bg-white/[0.03] px-3 py-2">
+          <span class="flex items-center gap-1.5 text-[11px] text-zinc-500">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+            All changes saved
+          </span>
+          <span class="text-[10px] text-zinc-600">v12</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==========================================================
+         CANVAS
+    ========================================================== -->
+    <main class="flex-1 overflow-y-auto bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.03),transparent_60%)] p-4 sm:p-6 lg:p-10">
+
+      <div class="mb-4 flex items-center justify-between">
+        <p class="text-[11px] font-medium text-zinc-600">Editing <span class="text-zinc-400">Home</span> · draft</p>
+        <div class="flex items-center gap-3 text-[10.5px] font-medium text-zinc-600">
+          <span class="flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full bg-brand-cyan"></span>Live canvas</span>
+        </div>
+      </div>
+
+      <!-- device frame -->
+      <div class="device-canvas mx-auto w-full overflow-hidden rounded-xl border border-white/10 bg-ink shadow-2xl transition-all duration-300">
+
+        <!-- fake browser bar -->
+        <div class="flex items-center gap-2 border-b border-white/[0.07] bg-zinc-950/70 px-3 py-2">
+          <div class="flex gap-1.5">
+            <span class="h-2 w-2 rounded-full bg-white/15"></span>
+            <span class="h-2 w-2 rounded-full bg-white/15"></span>
+            <span class="h-2 w-2 rounded-full bg-white/15"></span>
+          </div>
+          <div class="mx-auto flex items-center gap-1.5 rounded border border-white/[0.07] bg-white/[0.03] px-2.5 py-0.5 text-[9px] font-medium text-zinc-600">
+            <svg class="h-2.5 w-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg>
+            northstudio.netweave.io
+          </div>
+        </div>
+
+        <!-- ===== portfolio site mock ===== -->
+        <div class="bg-ink">
+
+          <!-- announcement -->
+          <div class="bg-gradient-to-r from-brand-cyan to-brand-blue px-4 py-1.5 text-center">
+            <p class="text-[8px] font-bold uppercase tracking-[0.22em] text-white">Now booking Q2 2026 — limited availability</p>
+          </div>
+
+          <!-- header -->
+          <div class="flex items-center justify-between border-b border-white/[0.07] px-4 py-3">
+            <span class="font-display text-[13px] font-bold tracking-tight text-white">North Studio</span>
+            <nav class="hidden items-center gap-4 text-[10px] font-medium text-zinc-500 sm:flex">
+              <span>Work</span><span>Services</span><span>About</span><span>Contact</span>
+            </nav>
+            <div class="flex items-center gap-2.5 text-zinc-400">
+              <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+              <span class="grid h-5 w-5 place-items-center rounded-md bg-white/5">
+                <svg class="h-2.5 w-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- hero -->
+          <div class="relative overflow-hidden border-b border-white/[0.07] bg-[radial-gradient(ellipse_at_50%_0%,rgba(0,242,254,0.16),rgba(79,172,254,0.08)_40%,transparent_70%)] px-6 py-12 text-center sm:py-16">
+            <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]"></div>
+            <div class="relative">
+              <p class="text-[8px] font-bold uppercase tracking-[0.32em] text-brand-cyan">Design studio · Cape Town</p>
+              <h2 class="mt-3 font-display text-2xl font-semibold leading-[0.95] tracking-[-0.02em] text-white sm:text-4xl">
+                Brands with<br />a point of view.
+              </h2>
+              <p class="mx-auto mt-3 max-w-xs text-[10.5px] leading-relaxed text-zinc-500">
+                We design sites, identities and campaigns for teams who refuse to look like everyone else.
+              </p>
+              <div class="mt-5 flex flex-wrap items-center justify-center gap-2">
+                <button class="rounded-md bg-gradient-to-r from-brand-cyan to-brand-blue px-5 py-2 text-[10.5px] font-semibold text-white shadow-glow">
+                  Start a project
+                </button>
+                <button class="rounded-md border border-white/15 px-5 py-2 text-[10.5px] font-semibold text-white">
+                  View work
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- services / feature grid -->
+          <div class="border-b border-white/[0.07] p-4 sm:p-5">
+            <div class="mb-3 flex items-center justify-between">
+              <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">What we do</p>
+              <p class="text-[9.5px] text-zinc-600">3 services</p>
+            </div>
+            <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+              <div class="rounded-lg border border-white/[0.07] bg-white/[0.02] p-3">
+                <span class="grid h-6 w-6 place-items-center rounded-md bg-gradient-to-br from-brand-cyan/20 to-brand-blue/10 text-brand-cyan">
+                  <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 9h6v6H9z" /></svg>
+                </span>
+                <p class="mt-2 text-[10.5px] font-semibold text-white">Brand design</p>
+                <p class="mt-0.5 text-[9.5px] leading-relaxed text-zinc-500">Identity, systems, guidelines.</p>
+              </div>
+              <div class="rounded-lg border border-white/[0.07] bg-white/[0.02] p-3">
+                <span class="grid h-6 w-6 place-items-center rounded-md bg-gradient-to-br from-brand-cyan/20 to-brand-blue/10 text-brand-cyan">
+                  <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2" /><path d="M8 21h8M12 17v4" /></svg>
+                </span>
+                <p class="mt-2 text-[10.5px] font-semibold text-white">Web design</p>
+                <p class="mt-0.5 text-[9.5px] leading-relaxed text-zinc-500">Marketing sites, product UI.</p>
+              </div>
+              <div class="rounded-lg border border-white/[0.07] bg-white/[0.02] p-3">
+                <span class="grid h-6 w-6 place-items-center rounded-md bg-gradient-to-br from-brand-cyan/20 to-brand-blue/10 text-brand-cyan">
+                  <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5Z" /><path d="m2 17 10 5 10-5M2 12l10 5 10-5" /></svg>
+                </span>
+                <p class="mt-2 text-[10.5px] font-semibold text-white">Development</p>
+                <p class="mt-0.5 text-[9.5px] leading-relaxed text-zinc-500">Fast, accessible, custom.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- media gallery / work -->
+          <div class="p-4 sm:p-5">
+            <div class="mb-3 flex items-center justify-between">
+              <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Selected work</p>
+              <p class="text-[9.5px] text-zinc-600">View all →</p>
+            </div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <div class="aspect-[4/3] rounded-lg border border-white/[0.06] bg-[radial-gradient(circle_at_30%_20%,#3f3f46,#09090b_75%)]"></div>
+                <p class="mt-1.5 text-[10px] font-medium text-white">Aperture App</p>
+                <p class="text-[9px] text-zinc-500">Product · 2026</p>
+              </div>
+              <div>
+                <div class="aspect-[4/3] rounded-lg border border-white/[0.06] bg-[radial-gradient(circle_at_70%_30%,#1e293b,#09090b_75%)]"></div>
+                <p class="mt-1.5 text-[10px] font-medium text-white">Fieldwork</p>
+                <p class="text-[9px] text-zinc-500">Brand · 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- footer strip -->
+          <div class="border-t border-white/[0.07] px-4 py-3">
+            <div class="flex items-center justify-between text-[8.5px] text-zinc-600">
+              <span class="font-display font-bold tracking-tight text-zinc-500">North Studio</span>
+              <span>© 2026 · Built on NetWeave</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- canvas footer hint -->
+      <p class="mx-auto mt-5 max-w-xl text-center text-[10.5px] leading-relaxed text-zinc-700">
+        Preview reflects saved changes. Click any section in the panel to edit it.
+      </p>
+    </main>
+  </div>
+</div>
+
+</body>
+</html>

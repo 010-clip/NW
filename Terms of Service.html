@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service — NetWeave</title>
+  <meta name="description" content="NetWeave's transparent platform agreement: zero-cost launch, pay-as-you-grow pricing, site ownership, data control, and acceptable use." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { ink: '#09090B', brand: { cyan: '#00F2FE', blue: '#4FACFE' } },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            display: ['"Space Grotesk"', 'Inter', 'sans-serif'],
+          },
+          boxShadow: { glow: '0 0 60px -14px rgba(0, 180, 255, 0.55)' },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    html { -webkit-text-size-adjust: 100%; }
+    body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    ::selection { background: #4FACFE; color: #09090B; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: #09090B; }
+    ::-webkit-scrollbar-thumb { background: #27272A; border-radius: 9999px; border: 2px solid #09090B; }
+    ::-webkit-scrollbar-thumb:hover { background: #3F3F46; }
+
+    /* reading-optimised document styles */
+    .doc h2 { scroll-margin-top: 6rem; }
+    .doc h3 { scroll-margin-top: 5.5rem; }
+    .doc p + p { margin-top: 1rem; }
+    .doc ul { list-style: none; padding: 0; }
+    .doc ul li { position: relative; padding-left: 1.25rem; }
+    .doc ul li::before {
+      content: ""; position: absolute; left: 0; top: 0.7em;
+      width: 5px; height: 5px; border-radius: 9999px;
+      background: linear-gradient(90deg, #00F2FE, #4FACFE);
+    }
+    .toc a.active { color: #fff; }
+  </style>
+</head>
+
+<body class="bg-ink font-sans text-zinc-300 antialiased">
+
+  <!-- ============================================================
+       HEADER
+  ============================================================ -->
+  <header class="sticky top-0 z-50 border-b border-white/[0.06] bg-ink/80 backdrop-blur-xl">
+    <input id="mobile-nav" type="checkbox" class="peer sr-only" />
+
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-5 lg:h-[72px] lg:px-8">
+
+      <a href="index.html" class="group flex shrink-0 items-center gap-2.5">
+        <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-cyan to-brand-blue text-ink shadow-glow transition-transform duration-300 group-hover:rotate-[-6deg]">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V6l8 12 8-12v12" /></svg>
+        </span>
+        <span class="font-display text-[17px] font-semibold tracking-tight text-white">NetWeave</span>
+      </a>
+
+      <nav class="hidden items-center gap-1 md:flex" aria-label="Primary">
+        <a href="index.html#features" class="rounded-lg px-3.5 py-2 text-[13.5px] font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white">Features</a>
+        <a href="index.html#pricing" class="rounded-lg px-3.5 py-2 text-[13.5px] font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white">Pricing</a>
+        <a href="about.html" class="rounded-lg px-3.5 py-2 text-[13.5px] font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white">About</a>
+      </nav>
+
+      <div class="hidden items-center gap-2 md:flex">
+        <a href="#" class="rounded-lg px-3.5 py-2 text-[13.5px] font-medium text-zinc-400 transition-colors hover:text-white">Sign In</a>
+        <a href="#" class="group inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-brand-cyan to-brand-blue px-4 py-2.5 text-[13.5px] font-semibold text-white transition-all hover:shadow-glow">
+          Launch Free Site
+          <svg class="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </a>
+      </div>
+
+      <label for="mobile-nav" class="grid h-10 w-10 cursor-pointer place-items-center rounded-lg border border-white/10 text-zinc-300 transition-colors hover:bg-white/5 md:hidden" aria-label="Toggle navigation">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+      </label>
+    </div>
+
+    <div class="hidden border-t border-white/[0.06] bg-ink px-5 pb-6 pt-2 peer-checked:block md:hidden">
+      <nav class="flex flex-col" aria-label="Mobile">
+        <a href="index.html#features" class="border-b border-white/[0.06] py-3.5 text-sm font-medium text-zinc-300">Features</a>
+        <a href="index.html#pricing" class="border-b border-white/[0.06] py-3.5 text-sm font-medium text-zinc-300">Pricing</a>
+        <a href="about.html" class="border-b border-white/[0.06] py-3.5 text-sm font-medium text-zinc-300">About</a>
+      </nav>
+      <div class="mt-5 flex flex-col gap-2.5">
+        <a href="#" class="rounded-lg border border-white/10 px-4 py-3 text-center text-sm font-semibold text-white">Sign In</a>
+        <a href="#" class="rounded-lg bg-gradient-to-r from-brand-cyan to-brand-blue px-4 py-3 text-center text-sm font-semibold text-white shadow-glow">Launch Free Site</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ============================================================
+         DOCUMENT HERO
+    ============================================================ -->
+    <section class="relative overflow-hidden border-b border-white/[0.06]">
+      <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:72px_72px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent_100%)]"></div>
+      <div class="pointer-events-none absolute left-1/2 top-[-12rem] h-[28rem] w-[44rem] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(0,242,254,0.14),rgba(79,172,254,0.07)_45%,transparent_75%)] blur-[100px]"></div>
+
+      <div class="relative mx-auto max-w-3xl px-5 pb-14 pt-16 lg:px-8 lg:pb-20 lg:pt-24">
+        <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-zinc-400">
+          <span class="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-brand-cyan to-brand-blue"></span>
+          Legal · Transparent Platform Agreement
+        </div>
+
+        <h1 class="mt-7 font-display text-4xl font-semibold leading-[1.02] tracking-[-0.03em] text-white sm:text-5xl lg:text-[3.6rem]">
+          Terms of Service
+        </h1>
+
+        <p class="mt-5 text-[15px] leading-relaxed text-zinc-400 sm:text-[16px]">
+          NetWeave is free to launch and pay-as-you-grow. These terms exist to make that simple promise concrete — and to keep the platform safe, fair and predictable for everyone on it.
+        </p>
+
+        <div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2 text-[12px] text-zinc-500">
+          <span><span class="font-medium text-zinc-400">Effective:</span> 1 March 2026</span>
+          <span class="h-1 w-1 rounded-full bg-zinc-700"></span>
+          <span><span class="font-medium text-zinc-400">Last updated:</span> 14 April 2026</span>
+          <span class="h-1 w-1 rounded-full bg-zinc-700"></span>
+          <span>Version 2.0</span>
+        </div>
+
+        <!-- plain-language callout -->
+        <div class="mt-10 rounded-2xl border border-brand-cyan/20 bg-gradient-to-br from-brand-cyan/[0.08] to-brand-blue/[0.04] p-5">
+          <div class="flex items-start gap-3">
+            <span class="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-md bg-white/[0.06] text-brand-cyan">
+              <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 16v-4M12 8h.01" /></svg>
+            </span>
+            <div>
+              <p class="text-[13px] font-semibold text-white">The short version</p>
+              <p class="mt-1 text-[13px] leading-relaxed text-zinc-400">
+                You can build and launch a site for free. You pay only for add-ons you turn on. You own everything you put on NetWeave. Don't use the platform to hurt people, break the law, or abuse the infrastructure. That's it — the rest of this page is the detail.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         DOCUMENT BODY — ToC + prose
+    ============================================================ -->
+    <section class="mx-auto max-w-7xl px-5 py-14 lg:px-8 lg:py-20">
+      <div class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
+
+        <!-- ===== sticky ToC ===== -->
+        <aside class="lg:col-span-4 lg:order-1">
+          <div class="lg:sticky lg:top-28">
+            <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-600">On this page</p>
+            <nav class="toc mt-4" aria-label="Table of contents">
+              <ul class="space-y-1 border-l border-white/[0.08]">
+                <li>
+                  <a href="#s1" class="block border-l-2 border-transparent py-2 pl-4 text-[13px] text-zinc-400 transition-colors hover:border-white/20 hover:text-white">
+                    1. Zero-Cost Launch &amp; Pay-As-You-Grow
+                  </a>
+                </li>
+                <li>
+                  <a href="#s2" class="block border-l-2 border-transparent py-2 pl-4 text-[13px] text-zinc-400 transition-colors hover:border-white/20 hover:text-white">
+                    2. Site Ownership &amp; Data Control
+                  </a>
+                </li>
+                <li>
+                  <a href="#s3" class="block border-l-2 border-transparent py-2 pl-4 text-[13px] text-zinc-400 transition-colors hover:border-white/20 hover:text-white">
+                    3. Acceptable Use Policy
+                  </a>
+                </li>
+                <li>
+                  <a href="#s4" class="block border-l-2 border-transparent py-2 pl-4 text-[13px] text-zinc-400 transition-colors hover:border-white/20 hover:text-white">
+                    4. Changes to these terms
+                  </a>
+                </li>
+                <li>
+                  <a href="#contact" class="block border-l-2 border-transparent py-2 pl-4 text-[13px] text-zinc-400 transition-colors hover:border-white/20 hover:text-white">
+                    Contact
+                  </a>
+                </li>
+              </ul>
+            </nav>
+
+            <div class="mt-8 rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">Questions?</p>
+              <p class="mt-2 text-[12.5px] leading-relaxed text-zinc-400">
+                If anything here is unclear, email us before you sign up — we'll answer plainly.
+              </p>
+              <a href="mailto:legal@netweave.io" class="mt-3 inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-brand-cyan hover:text-white">
+                legal@netweave.io
+                <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              </a>
+            </div>
+          </div>
+        </aside>
+
+        <!-- ===== document content ===== -->
+        <article class="doc lg:col-span-8 lg:order-2 text-[15px] leading-[1.75] text-zinc-400">
+
+          <!-- ===== Section 1 ===== -->
+          <section id="s1">
+            <div class="flex items-center gap-3">
+              <span class="font-display text-[11px] font-semibold tracking-[0.16em] text-zinc-600">01</span>
+              <span class="h-px flex-1 bg-white/[0.06]"></span>
+            </div>
+            <h2 class="mt-4 font-display text-2xl font-semibold leading-tight tracking-tight text-white sm:text-3xl">
+              Zero-Cost Launch &amp; Pay-As-You-Grow Model
+            </h2>
+
+            <p class="mt-5">
+              NetWeave is free to launch. There is no trial, no demo paywall, and no credit card required to build and publish your first site. Creating an account, designing pages, and going live on a <span class="font-mono text-[13.5px] text-zinc-300">yoursite.netweave.io</span> subdomain costs R0 — indefinitely.
+            </p>
+
+            <h3 class="mt-8 font-display text-[16px] font-semibold tracking-tight text-white">How you pay</h3>
+            <p class="mt-3">
+              As your project grows, you can turn on optional add-ons — such as a custom domain, advanced analytics, additional storage, form handling, or priority infrastructure. Each add-on is priced individually and monthly. You pay only for what you enable, and you can disable any add-on at any time from your dashboard.
+            </p>
+
+            <h3 class="mt-8 font-display text-[16px] font-semibold tracking-tight text-white">What we do not charge</h3>
+            <ul class="mt-3 space-y-2 text-[14.5px]">
+              <li>No platform fee on transactions you process through your site.</li>
+              <li>No revenue share on your work, products, or content.</li>
+              <li>No per-page, per-component, or per-publish charges.</li>
+              <li>No "gotcha" overage fees — if an add-on would exceed its limit, we notify you before billing changes.</li>
+            </ul>
+
+            <h3 class="mt-8 font-display text-[16px] font-semibold tracking-tight text-white">Changes to pricing</h3>
+            <p class="mt-3">
+              We may introduce new add-ons or adjust the price of existing ones. If we change the price of an add-on you already have, we'll give you at least 30 days' notice by email. You can cancel the add-on before the change takes effect and keep using your site on the free plan.
+            </p>
+
+            <h3 class="mt-8 font-display text-[16px] font-semibold tracking-tight text-white">Billing &amp; refunds</h3>
+            <p class="mt-3">
+              Add-ons are billed monthly in advance. If you cancel mid-cycle, the add-on remains active until the end of the paid period. We don't offer partial-month refunds, except where required by law or where we've made a billing error. If we do charge you in error, tell us within 60 days and we'll refund the full amount.
+            </p>
+          </section>
+
+          <!-- ===== Section 2 ===== -->
+          <section id="s2" class="mt-16">
+            <div class="flex items-center gap-3">
+              <span class="font-display text-[11px] font-semibold tracking-[0.16em] text-zinc-600">02</span>
+              <span class="h-px flex-1 bg-white/[0.06]"></span>
+            </div>
+            <h2 class="mt-4 font-display text-2xl font-semibold leading-tight tracking-tight text-white sm:text-3xl">
+              Site Ownership &amp; Data Control
+            </h2>
+
+            <p class="mt-5">
+              You own your site. Everything you create on NetWeave — your pages, your design, your images, your text, your domain (once purchased), and your customer data — belongs to you. NetWeave claims no ownership, no license beyond what's needed to run the platform, and no right to monetise your content.
+            </p>
+
+            <h3 class="mt-8 font-display text-[16px] font-semibold tracking-tight text-white">What we need from you</h3>
+            <p class="mt-3">
+              To operate the platform, we need a limited licence to host, cache, and serve your content to visitors — and to display it back to you inside the editor. This licence ends the moment you delete the content or close your account. It does not give us the right to reuse your content for marketing, resell it, or share it with third parties beyond the infrastructure providers required to run NetWeave.
+            </p>
+
+            <h3 class="mt-8 font-display text-[16px] font-semibold tracking-tight text-white">Your data, your export</h3>
+            <p class="mt-3">
+              At any time, you can export your site's content, media and form submissions from your dashboard in standard formats (JSON, CSV, and original media files). You can also delete individual pages, media assets, or your entire account. When you delete your account, we permanently erase your content within 30 days, except where we're required by law to retain specific records.
+            </p>
+
+            <h3 class="mt-8 font-display text-[16px] font-semibold tracking-tight text-white">Your visitors' data</h3>
+            <p class="mt-3">
+              Form submissions, analytics events and any other data your site collects from its visitors belong to you. We process that data on your behalf as a data processor, under our Data Processing Addendum. You are the data controller and are responsible for making sure your site complies with applicable privacy laws — including displaying an appropriate privacy policy and obtaining consent where required.
+            </p>
+
+            <h3 class="mt-8 font-display text-[16px] font-semibold tracking-tight text-white">Domains</h3>
+            <p class="mt-3">
+              If you connect a custom domain to your NetWeave site, you remain the registered owner of that domain. If the domain is registered through NetWeave, you can transfer it out at any time. We never lock a domain to the platform as a condition of using it.
+            </p>
+          </section>
+
+          <!-- ===== Section 3 ===== -->
+          <section id="s3" class="mt-16">
+            <div class="flex items-center gap-3">
+              <span class="font-display text-[11px] font-semibold tracking-[0.16em] text-zinc-600">03</span>
+              <span class="h-px flex-1 bg-white/[0.06]"></span>
+            </div>
+            <h2 class="mt-4 font-display text-2xl font-semibold leading-tight tracking-tight text-white sm:text-3xl">
+              Acceptable Use Policy
+            </h2>
+
+            <p class="mt-5">
+              NetWeave is a general-purpose website builder. You can use it to build almost anything — a portfolio, a landing page, a blog, a store, a community, a documentation site, a game, or something we haven't imagined yet. The limit isn't what you build; it's how you use it.
+            </p>
+
+            <h3 class="mt-8 font-display text-[16px] font-semibold tracking-tight text-white">You may not use NetWeave to</h3>
+            <ul class="mt-3 space-y-2 text-[14.5px]">
+              <li>Publish content that is illegal in your jurisdiction or ours, including content that infringes copyright, trademark, or other intellectual property rights.</li>
+              <li>Distribute malware, phishing pages, spam, or deceptive look-alike sites designed to defraud visitors.</li>
+              <li>Harass, threaten, defame, or target individuals or groups with hateful or violent content.</li>
+              <li>Sell or promote goods or services that are themselves illegal — including unlicensed pharmaceuticals, weapons, exploitative material, or financial fraud.</li>
+              <li>Circumvent platform limits, resell NetWeave infrastructure without authorisation, or run bots that abuse the hosting, CDN, or form systems.</li>
+              <li>Process payment card data directly on NetWeave pages without using an approved payment processor.</li>
+              <li>Impersonate another person, brand, or organisation in a way that misleads visitors about your identity or affiliation.</li>
+            </ul>
+
+            <h3 class="mt-8 font-display text-[16px] font-semibold tracking-tight text-white">Commercial use is fine</h3>
+            <p class="mt-3">
+              You can use NetWeave for commercial purposes — client work, freelance projects, product sites, digital storefronts, and so on. There's no restriction on earning money through your site.
+            </p>
+
+            <h3 class="mt-8 font-display text-[16px] font-semibold tracking-tight text-white">Enforcement</h3>
+            <p class="mt-3">
+              If we believe your site violates this policy, we'll contact you with specifics and give you a reasonable window to fix the issue. In serious cases — illegal content, active fraud, or a threat to platform security — we may suspend the site immediately while we investigate. If we suspend a site in error, we'll restore it and refund any add-ons affected.
+            </p>
+
+            <p class="mt-3">
+              You can appeal any enforcement action by emailing <a href="mailto:legal@netweave.io" class="font-medium text-white underline decoration-white/30 underline-offset-2 hover:decoration-white">legal@netweave.io</a>. We review every appeal within five working days.
+            </p>
+          </section>
+
+          <!-- ===== Section 4 ===== -->
+          <section id="s4" class="mt-16">
+            <div class="flex items-center gap-3">
+              <span class="font-display text-[11px] font-semibold tracking-[0.16em] text-zinc-600">04</span>
+              <span class="h-px flex-1 bg-white/[0.06]"></span>
+            </div>
+            <h2 class="mt-4 font-display text-2xl font-semibold leading-tight tracking-tight text-white sm:text-3xl">
+              Changes to these terms
+            </h2>
+
+            <p class="mt-5">
+              We may update these terms as the platform evolves. When we make material changes — anything that affects your rights, your data, or how much you pay — we'll notify you by email at least 30 days before the change takes effect, and we'll highlight the changes clearly.
+            </p>
+
+            <p class="mt-3">
+              If you don't agree with an update, you can stop using NetWeave and export your content before the change takes effect. Continuing to use the platform after the effective date means you accept the updated terms.
+            </p>
+
+            <p class="mt-3">
+              Minor changes — typo corrections, clarifications, updated contact details — take effect immediately. We'll always keep a version history of these terms publicly accessible.
+            </p>
+          </section>
+
+          <!-- ===== Contact ===== -->
+          <section id="contact" class="mt-16 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 sm:p-8">
+            <h2 class="font-display text-xl font-semibold tracking-tight text-white">Contact</h2>
+            <p class="mt-3">
+              If you have questions about these terms, your data, or anything else — email us before you sign up. We answer plainly.
+            </p>
+            <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <a href="mailto:legal@netweave.io" class="flex items-center gap-3 rounded-xl border border-white/[0.08] bg-white/[0.03] p-3.5 transition-colors hover:border-white/20 hover:bg-white/[0.05]">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/[0.05] text-brand-cyan">
+                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>
+                </span>
+                <div class="min-w-0">
+                  <p class="text-[12px] font-medium text-zinc-500">Legal &amp; terms</p>
+                  <p class="truncate text-[13px] font-semibold text-white">legal@netweave.io</p>
+                </div>
+              </a>
+              <a href="mailto:privacy@netweave.io" class="flex items-center gap-3 rounded-xl border border-white/[0.08] bg-white/[0.03] p-3.5 transition-colors hover:border-white/20 hover:bg-white/[0.05]">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/[0.05] text-brand-cyan">
+                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z" /></svg>
+                </span>
+                <div class="min-w-0">
+                  <p class="text-[12px] font-medium text-zinc-500">Privacy &amp; data</p>
+                  <p class="truncate text-[13px] font-semibold text-white">privacy@netweave.io</p>
+                </div>
+              </a>
+            </div>
+            <p class="mt-5 text-[12px] text-zinc-600">
+              NetWeave (Pty) Ltd · Cape Town, South Africa · Company reg. 2026/014872/07
+            </p>
+          </section>
+
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="border-t border-white/[0.06] bg-ink">
+    <div class="mx-auto max-w-7xl px-5 py-14 lg:px-8 lg:py-16">
+      <div class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-6">
+
+        <div class="col-span-2 lg:col-span-2">
+          <a href="index.html" class="flex items-center gap-2.5">
+            <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-cyan to-brand-blue text-ink">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V6l8 12 8-12v12" /></svg>
+            </span>
+            <span class="font-display text-[17px] font-semibold tracking-tight text-white">NetWeave</span>
+          </a>
+          <p class="mt-4 max-w-xs text-[13.5px] leading-relaxed text-zinc-500">
+            High-performance website builder for creators, freelancers, agencies and businesses. Launch free. Scale on your terms.
+          </p>
+          <div class="mt-6 flex items-center gap-2">
+            <a href="#" aria-label="X" class="grid h-9 w-9 place-items-center rounded-lg border border-white/[0.08] text-zinc-500 transition-colors hover:border-white/20 hover:text-white">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-6.8 7.8L23 22h-6.9l-4.5-6-5.2 6H3.3l7.3-8.3L1.7 2h6.9l4.2 5.6L18.9 2Zm-1.2 18h1.7L7.5 3.8H5.6L17.7 20Z" /></svg>
+            </a>
+            <a href="#" aria-label="Instagram" class="grid h-9 w-9 place-items-center rounded-lg border border-white/[0.08] text-zinc-500 transition-colors hover:border-white/20 hover:text-white">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
+            </a>
+            <a href="#" aria-label="GitHub" class="grid h-9 w-9 place-items-center rounded-lg border border-white/[0.08] text-zinc-500 transition-colors hover:border-white/20 hover:text-white">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.15-1.11-1.46-1.11-1.46-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" /></svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Product</h4>
+          <ul class="mt-4 space-y-2.5 text-[13.5px]">
+            <li><a href="index.html#features" class="text-zinc-400 transition-colors hover:text-white">Features</a></li>
+            <li><a href="#" class="text-zinc-400 transition-colors hover:text-white">Page Editor</a></li>
+            <li><a href="#" class="text-zinc-400 transition-colors hover:text-white">Components</a></li>
+            <li><a href="#" class="text-zinc-400 transition-colors hover:text-white">Add-ons</a></li>
+            <li><a href="#" class="text-zinc-400 transition-colors hover:text-white">Changelog</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Company</h4>
+          <ul class="mt-4 space-y-2.5 text-[13.5px]">
+            <li><a href="about.html" class="text-zinc-400 transition-colors hover:text-white">About</a></li>
+            <li><a href="#" class="text-zinc-400 transition-colors hover:text-white">Careers</a></li>
+            <li><a href="#" class="text-zinc-400 transition-colors hover:text-white">Press</a></li>
+            <li><a href="#" class="text-zinc-400 transition-colors hover:text-white">Contact</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Resources</h4>
+          <ul class="mt-4 space-y-2.5 text-[13.5px]">
+            <li><a href="#" class="text-zinc-400 transition-colors hover:text-white">Documentation</a></li>
+            <li><a href="#" class="text-zinc-400 transition-colors hover:text-white">API Reference</a></li>
+            <li><a href="#" class="text-zinc-400 transition-colors hover:text-white">Guides</a></li>
+            <li><a href="#" class="text-zinc-400 transition-colors hover:text-white">Status</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Legal</h4>
+          <ul class="mt-4 space-y-2.5 text-[13.5px]">
+            <li><a href="#" class="text-zinc-400 transition-colors hover:text-white">Privacy</a></li>
+            <li><a href="terms.html" class="text-white">Terms</a></li>
+            <li><a href="#" class="text-zinc-400 transition-colors hover:text-white">DPA</a></li>
+            <li><a href="#" class="text-zinc-400 transition-colors hover:text-white">Security</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-12 flex flex-col items-start justify-between gap-4 border-t border-white/[0.06] pt-7 sm:flex-row sm:items-center">
+        <p class="text-[12.5px] text-zinc-600">© 2026 NetWeave (Pty) Ltd. All rights reserved.</p>
+        <div class="flex items-center gap-2 text-[12.5px] text-zinc-600">
+          <span class="relative flex h-1.5 w-1.5">
+            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+          </span>
+          All systems operational
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
