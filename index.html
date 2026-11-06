@@ -581,19 +581,36 @@
 
 const BACKEND_URL = 'https://brussels-painting-harley-andale.trycloudflare.com';
 
-fetch(`${BACKEND_URL}/wp-json/`)
-  .then(res => {
-    if (!res.ok) throw new Error(res.status);
-    return res.json();
-  })
-  .then(data => {
-    console.log('Connected:', data.name);
-    document.getElementById('system-status').innerText = '● Backend Connected';
-  })
-  .catch(err => {
-    console.error('API Error:', err);
-    document.getElementById('system-status').innerText = '○ Backend Offline';
-  });
+async function verifyConnection() {
+  const badge = document.getElementById('system-status');
+  
+  try {
+    const res = await fetch(`${BACKEND_URL}/wp-json/`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+    const data = await res.json();
+    console.log('✅ Connected to NetWeave Backend:', data.name);
+    
+    if (badge) {
+      badge.textContent = '● Backend Connected';
+      badge.className = 'px-3 py-1 text-xs rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/30 font-mono';
+    }
+  } catch (err) {
+    console.error('❌ Connection error:', err);
+    if (badge) {
+      badge.textContent = '○ Backend Offline';
+      badge.className = 'px-3 py-1 text-xs rounded-full bg-red-500/10 text-red-400 border border-red-500/30 font-mono';
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', verifyConnection);
   
 </script>
 
