@@ -572,21 +572,30 @@
     </div>
   </footer>
 
+  <div id="system-status" class="px-3 py-1 text-xs rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700 font-mono">
+  Connecting...
+  </div>
+
 <script>
-  // Replace this string with whatever .trycloudflare.com URL Session 3 generated:
-const BACKEND_URL = 'https://affiliation-appear-figured-conclude.trycloudflare.com'; 
+  const BACKEND_URL = 'https://affiliation-appear-figured-conclude.trycloudflare.com';
 
 async function checkBackendConnection() {
+  const badge = document.getElementById('system-status');
+  
   try {
-    const response = await fetch(`${BACKEND_URL}/wp-json/`);
-    const data = await response.json();
-    console.log('✅ Connected to NetWeave WordPress Backend:', data.name);
-  } catch (error) {
-    console.error('❌ Tunnel Connection Failed:', error);
+    const res = await fetch(`${BACKEND_URL}/wp-json/`);
+    if (!res.ok) throw new Error();
+    
+    // Success State (Teal/Blue Gradient Theme)
+    badge.textContent = '● Backend Connected';
+    badge.className = 'px-3 py-1 text-xs rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/30 font-mono';
+  } catch (err) {
+    // Error State
+    badge.textContent = '○ Backend Offline';
+    badge.className = 'px-3 py-1 text-xs rounded-full bg-red-500/10 text-red-400 border border-red-500/30 font-mono';
   }
 }
 
-document.addEventListener('DOMContentLoaded', checkBackendConnection);
-</script>
+document.addEventListener('DOMContentLoaded', checkBackendConnection);</script>
 </body>
 </html>
