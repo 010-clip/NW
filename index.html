@@ -578,32 +578,43 @@
 
 
 <script>
-  // Your Cloudflare Worker / Target domain
-  const FRONTEND_URL = 'https://nw.mthokozisizulu7002.workers.dev';
-  // Your active Termux Tunnel URL
-  const BACKEND_URL = 'https://affiliation-appear-figured-conclude.trycloudflare.com';
 
-  async function checkBackendConnection() {
-    const badge = document.getElementById('system-status');
-    if (!badge) return;
-    
-    try {
-      const res = await fetch(`${BACKEND_URL}/wp-json/`);
-      if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
-      
-      const data = await res.json();
-      console.log('✅ Connected to NetWeave Backend:', data.name);
+const BACKEND_URL = 'https://affiliation-appear-figured-conclude.trycloudflare.com';
 
-      badge.textContent = '● Backend Connected';
-      badge.className = 'px-3 py-1 text-xs rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/30 font-mono';
-    } catch (err) {
-      console.error('❌ Connection failed:', err);
-      badge.textContent = '○ Backend Offline (CORS or Tunnel Down)';
-      badge.className = 'px-3 py-1 text-xs rounded-full bg-red-500/10 text-red-400 border border-red-500/30 font-mono';
+async function checkBackendConnection() {
+  const badge = document.getElementById('system-status');
+  if (!badge) return;
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/wp-json/`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`Server returned status: ${res.status}`);
     }
-  }
 
-  document.addEventListener('DOMContentLoaded', checkBackendConnection);
+    const data = await res.json();
+    
+    // UI Success State
+    badge.textContent = '● Backend Connected';
+    badge.className = 'px-3 py-1 text-xs rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/30 font-mono';
+    console.log('Successfully fetched WP REST API data:', data);
+
+  } catch (err) {
+    // UI Failure State
+    badge.textContent = '○ Backend Offline (CORS/Network)';
+    badge.className = 'px-3 py-1 text-xs rounded-full bg-red-500/10 text-red-400 border border-red-500/30 font-mono';
+    console.error('Connection failure error details:', err);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', checkBackendConnection);
+  
 </script>
 
 </body>
